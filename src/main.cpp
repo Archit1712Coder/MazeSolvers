@@ -6,10 +6,10 @@
    Start button - 11
 
 
-   Line sensor on A0,A1,A2,A3,A4
-   A0-left & A4 - right
+   Line sensor on A0,A1,A2,A3,
+   A0-left & A3 - right
 */
-// Less than threshold = black , more than threshhold = white
+
 
 #include <Arduino.h>
 
@@ -28,13 +28,13 @@ bool endFound = 0;
 // Sensor variables
 int blackValue = 200;
 int whiteValue = 1000;
-int threshold = blackValue + whiteValue * 0.5;
+int threshold = blackValue + whiteValue * 0.5; // int threshold = (blackValue + whiteValue) * 0.5; Less than threshold = black , more than threshhold = white
 int leftMostSensor;
 int leftMidSensor;
 int rightMidSensor;
 int rightMostSensor;
-// int threshold = (blackValue + whiteValue) * 0.5;
 int FT = 50;
+// Motor control variables
 int leftspeed = 100;
 int rightspeed = 100;
 int lfspeed = 190; // Line follow(forward) speed
@@ -63,19 +63,17 @@ void setup()
   pinMode(6, OUTPUT); // red
 }
 
-void lightsoff()
+void lightsoff() //Turns off all LEDs
 {
-  digitalWrite(5, LOW);
   digitalWrite(6, LOW);
 }
 
-void red()
+void red() //Turns on the red LED 
 {
-  digitalWrite(5, LOW);
   digitalWrite(6, HIGH); // RED
 }
 
-void PID()
+void PID() 
 {
   int error = leftMidSensor - rightMidSensor;
 
@@ -166,6 +164,7 @@ void botinchforward()
   analogWrite(10, turnspeed1);
   delay(10);
 }
+
 void botstop()
 {
   digitalWrite(7, HIGH);
@@ -173,6 +172,7 @@ void botstop()
   analogWrite(9, 0);
   analogWrite(10, 0);
 }
+
 void botuturn()
 {
   digitalWrite(7, HIGH);
@@ -235,8 +235,10 @@ void checknode()
       if ((leftMidSensor > threshold) && (rightMidSensor > threshold))
         straight = 1;
     }
-    if ((e == 1) && (rightMidSensor > threshold) && (rightMostSensor > threshold) && (leftMidSensor > threshold) && (rightMidSensor))
+    if ((e == 1) && (rightMidSensor > threshold) && (rightMostSensor > threshold) && (leftMidSensor > threshold) && (rightMidSensor > threshold))
+    {
       e = 2;
+    }
   }
   if (uturn == 1)
   {
@@ -309,7 +311,7 @@ void reposition()
 void loop()
 {
   readSensors();
-  while (digitalRead(startButton) == 1)
+  while (digitalRead(startButton) == 0)
   { // Do nothing while waiting for button press
   }
   delay(300);
@@ -337,7 +339,7 @@ void loop()
   }
   int endpos = str.indexOf('E');
 
-  while (digitalRead(startButton) == 1)
+  while (digitalRead(startButton) == 0)
   { // Do nothing while waiting for button press
   }
 
